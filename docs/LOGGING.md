@@ -25,24 +25,22 @@ Se crea un archivo nuevo cada día automáticamente.
 
 ## Cómo usar el sistema de logging
 
-### Opción 1: Ver logs en tiempo real
-
-Abre una terminal y ejecuta:
+### Opción 1: Ver logs en tiempo real con tail
 
 ```bash
 cd /Users/kevinmanotas/Desktop/Game_stock
-python ver_logs.py
+tail -f logs/gamestock_$(date +%Y%m%d).log
 ```
 
 Esto mostrará los logs **en tiempo real** mientras usas la aplicación. Perfecto para debugging.
 
-### Opción 2: Ver historial completo
+### Opción 2: Ver últimos registros
 
-Para ver todo el historial de logs de hoy:
+Para ver las últimas 50 líneas del log de hoy:
 
 ```bash
 cd /Users/kevinmanotas/Desktop/Game_stock
-python ver_historial_logs.py
+tail -50 logs/gamestock_$(date +%Y%m%d).log
 ```
 
 ### Opción 3: Ver logs directamente

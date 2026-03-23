@@ -21,8 +21,8 @@ GameStock ahora utiliza una **base de datos unificada** con relaciones FK (Forei
    - Roles: admin / usuario
    - Estado: activo / inactivo
 
-2. **categorias** - Categorías de productos
-   - 9 categorías predefinidas (Acción, RPG, Deportes, etc.)
+2. **categorias** - Categorías de productos tecnológicos
+   - 7 categorías predefinidas (Celulares, Computadores, Consolas, Gaming, Periféricos, Audio, Wearables)
 
 3. **productos** - Inventario de productos
    - FK → categorias
@@ -120,19 +120,19 @@ from database import db_unified as db
 ```python
 # Obtener todas las categorías
 categorias = database.obtener_categorias()
-# Resultado: [(1, 'Acción', 'Descripción'), ...]
+# Resultado: [(1, 'Celulares', 'Dispositivos móviles y smartphones'), ...]
 
 # Agregar producto con categoría
 database.agregar_producto(
-    nombre="FIFA 24",
+    nombre="iPhone 15",
     cantidad=10,
-    precio=50000,
-    categoria_id=3,  # Deportes
+    precio=4000000,
+    categoria_id=1,  # Celulares
     usuario_id=1
 )
 
-# Filtrar productos por categoría
-productos = database.obtener_productos_por_categoria(categoria_id=3)
+# Filtrar productos por categoría (si está implementado)
+productos = database.obtener_productos_por_categoria(categoria_id=1)
 ```
 
 ### 2. Auditoría / Historial
@@ -155,8 +155,8 @@ stats = database.obtener_estadisticas()
 # Resultado:
 # {
 #     'total_productos': 25,
-#     'valor_total': 1250000.00,
-#     'por_categoria': [('Acción', 10), ('RPG', 8), ...],
+#     'valor_total': 50000000.00,
+#     'por_categoria': [('Celulares', 10), ('Computadores', 8), ...],
 #     'bajo_stock': 3
 # }
 ```

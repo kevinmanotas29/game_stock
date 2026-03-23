@@ -229,14 +229,14 @@ IMPORTANTE: Responde SOLO con este formato JSON exacto (sin comentarios ni texto
 {{"nombre": "nombre del producto", "cantidad": numero, "precio": numero}}
 
 Reglas:
-- nombre: El nombre del videojuego o producto
+- nombre: El nombre del producto tecnológico
 - cantidad: Un número entero (cuántas unidades)
 - precio: Un número (precio en pesos colombianos, sin puntos ni comas)
 - Si mencionan "mil" o "k", convertir a número (ej: "50 mil" = 50000)
 - Si falta algún dato, usa null
 
-Ejemplo mensaje: "Agrega 10 FIFA 24 a 50 mil"
-Respuesta: {{"nombre": "FIFA 24", "cantidad": 10, "precio": 50000}}"""
+Ejemplo mensaje: "Agrega 10 iPhone 15 a 4 millones"
+Respuesta: {{"nombre": "iPhone 15", "cantidad": 10, "precio": 4000000}}"""
 
                 try:
                     # Llamar a Gemini para extraer los datos
@@ -273,11 +273,11 @@ Respuesta: {{"nombre": "FIFA 24", "cantidad": 10, "precio": 50000}}"""
                         if cantidad is None: faltantes.append("cantidad")
                         if precio is None: faltantes.append("precio")
                         
-                        return f"⚠️ Me falta información para agregar el producto:\n   • {', '.join(faltantes)}\n\nEjemplo: 'Agrega 10 FIFA 24 a 50000'"
+                        return f"⚠️ Me falta información para agregar el producto:\n   • {', '.join(faltantes)}\n\nEjemplo: 'Agrega 10 iPhone 15 a 4000000'"
                         
                 except json.JSONDecodeError:
                     logger.error(f"Error al parsear JSON de Gemini: {respuesta_gemini.text}")
-                    return "⚠️ No pude entender el formato. Intenta algo como: 'Agrega 10 FIFA 24 a 50000'"
+                    return "⚠️ No pude entender el formato. Intenta algo como: 'Agrega 10 iPhone 15 a 4000000'"
                 except Exception as e:
                     logger.error(f"Error al procesar con Gemini: {e}")
                     return f"⚠️ Error al procesar: {str(e)}"
@@ -321,7 +321,7 @@ Respuesta: {{"nombre": "FIFA 24", "cantidad": 10, "precio": 50000}}"""
                     else:
                         return f"✗ No se encontró el producto con ID {id_producto}"
                 
-                return "Para actualizar un producto, especifica el ID y los nuevos valores. Ejemplo: 'Actualiza producto 3: nombre Mario, cantidad 20, precio $50'"
+                return "Para actualizar un producto, especifica el ID y los nuevos valores. Ejemplo: 'Actualiza producto 3: nombre iPhone 14, cantidad 20, precio 3500000'"
             
             # CONSULTAS - Usar Gemini AI
             # Agregar contexto del inventario al mensaje
@@ -330,7 +330,7 @@ Respuesta: {{"nombre": "FIFA 24", "cantidad": 10, "precio": 50000}}"""
             for p in productos:
                 contexto += f"ID: {p[0]} | {p[1]} | Stock: {p[2]} | Precio: ${p[3]}\n"
             
-            mensaje_completo = f"""Eres un asistente para GameStock, un sistema de inventario de videojuegos.
+            mensaje_completo = f"""Eres un asistente para GameStock, un sistema de inventario de productos tecnológicos (celulares, computadores, consolas, gaming, periféricos, audio, wearables).
 {contexto}
 
 Usuario pregunta: {message}

@@ -43,7 +43,7 @@ Todos los errores se registran en los logs para análisis.
 En lugar de preguntar "¿Qué productos tengo?", simplemente mira la tabla del inventario.
 
 ### Comandos Eficientes
-- **"Agrega FIFA 24, cantidad 10, precio 50000"** - Acción directa (recomendado)
+- **"Agrega 10 iPhone 15 a 4 millones"** - Acción directa con lenguaje natural (recomendado)
 - **"Hola, ¿cómo estás? ¿Puedes ayudarme?"** - Gasta cuota sin hacer nada útil (evitar)
 
 ### Usa el Formulario Manual
