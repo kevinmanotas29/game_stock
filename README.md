@@ -1,7 +1,7 @@
 # GameStock - Sistema de Inventario con IA
 
 Aplicación de escritorio moderna desarrollada en Python con CustomTkinter, SQLite y Google Gemini AI.  
-Gestiona inventarios de videojuegos con CRUD completo, chat inteligente integrado y sistema de logging avanzado.
+Gestiona inventarios de productos tecnológicos (celulares, computadores, consolas, gaming, periféricos, audio, wearables) con CRUD completo, categorías, chat inteligente integrado y sistema de auditoría avanzado.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
@@ -24,19 +24,23 @@ Gestiona inventarios de videojuegos con CRUD completo, chat inteligente integrad
 - Animaciones suaves y transiciones
 
 ### Gestión de Inventario
-- Agregar productos
+- Agregar productos con categorías
+- Categorías: Celulares, Computadores, Consolas, Gaming, Periféricos, Audio, Wearables
 - Listar productos en tabla dinámica
 - Actualizar productos (seleccionar de tabla)
 - Eliminar productos
 - Validación de datos en tiempo real
 - Formato de moneda colombiana (COP)
+- Base de datos unificada con relaciones FK
 
 ### Chat con IA (Gemini 2.5 Flash)
 - Consultar inventario en lenguaje natural
-- Agregar productos mediante comandos ("Agrega FIFA 24, cantidad 10, precio 50000")
+- Agregar productos mediante lenguaje natural ("Agrega 10 iPhone 15 a 4 millones")
+- Extracción inteligente de datos (nombre, cantidad, precio)
 - Actualizar productos con texto natural
 - Eliminar productos por ID o nombre
 - Calcular valor total del inventario
+- Consultar por categorías
 - Respuestas inteligentes contextuales en español
 - Detección automática de acciones
 - Manejo inteligente de errores de cuota
@@ -47,6 +51,23 @@ Gestiona inventarios de videojuegos con CRUD completo, chat inteligente integrad
 - Archivo de logs diario automático
 - Scripts para visualización en tiempo real
 - Debugging facilitado con trazabilidad completa
+
+### Base de Datos Unificada
+- **gamestock.db**: Una sola base de datos SQLite con relaciones FK
+- **4 Tablas principales**:
+  - `usuarios`: Autenticación y perfiles de usuario
+  - `categorias`: 7 categorías de productos tecnológicos
+  - `productos`: Inventario con relación a categorías y usuarios
+  - `historial_cambios`: Auditoría completa de todas las operaciones CRUD
+- **Categorías disponibles**:
+  - Celulares
+  - Computadores
+  - Consolas
+  - Gaming
+  - Periféricos
+  - Audio
+  - Wearables
+- Ver documentación completa en `docs/MER.md`
 
 ---
 
@@ -62,8 +83,8 @@ Game_stock/
 │   └── interfaz.py            # Interfaz principal con CustomTkinter
 │
 ├── database/
-│   ├── auth.py                # Autenticación de usuarios
-│   └── db.py                  # Operaciones CRUD con SQLite
+│   ├── auth_unified.py        # Autenticación de usuarios
+│   └── db_unified.py          # Operaciones CRUD con SQLite (productos, categorías, historial)
 │
 ├── chat/
 │   ├── __init__.py
@@ -74,21 +95,20 @@ Game_stock/
 │   └── logger.py              # Sistema de logging centralizado
 │
 ├── data/
-│   ├── inventario.db          # Base de datos de productos
-│   └── usuarios.db            # Base de datos de usuarios
+│   └── gamestock.db           # Base de datos unificada (usuarios, productos, categorías, historial)
 │
 ├── logs/
 │   └── gamestock_YYYYMMDD.log # Logs diarios automáticos
 │
-├── ver_logs.py                # Script para ver logs en tiempo real
-├── ver_historial_logs.py      # Script para ver historial completo
+├── docs/
+│   ├── MER.md                 # Documentación del modelo ER
+│   ├── LOGGING.md             # Documentación del sistema de logging
+│   └── GEMINI_LIMITS.md       # Información sobre límites de API
 │
 ├── .env                       # API key de Google (NO SUBIR A GIT)
 ├── .gitignore                 # Archivos ignorados
 ├── requirements.txt           # Dependencias del proyecto
-├── README.md                  # Este archivo
-├── LOGGING.md                 # Documentación del sistema de logging
-└── GEMINI_LIMITS.md           # Información sobre límites de API
+└── README.md                  # Este archivo
 ```
 
 ---
@@ -154,20 +174,22 @@ python ver_historial_logs.py
 ```
 "¿Cuántos productos tengo?"
 "Muéstrame todos los productos"
-"¿Qué videojuegos tengo en stock?"
+"¿Qué productos tengo en stock?"
 "¿Cuál es el producto más caro?"
+"¿Cuántos celulares tengo?"
 ```
 
-#### Agregar Productos
+#### Agregar Productos (Lenguaje Natural)
 ```
-"Agrega FIFA 24, cantidad 10, precio 50000"
-"Añade nombre: Zelda, cantidad: 5, precio: 60000"
-"Agrega Elden Ring con 15 unidades a $70000"
+"Agrega 10 iPhone 15 a 4 millones"
+"Añade 5 MacBook Pro a 8 millones"
+"Agrega PS5 con 15 unidades a 2000000"
+"Quiero agregar 20 AirPods Pro, valen 800000"
 ```
 
 #### Actualizar Productos
 ```
-"Actualiza producto 3: nombre Mario Kart, cantidad 20, precio 55000"
+"Actualiza producto 3: nombre iPhone 14, cantidad 20, precio 3500000"
 "Cambia el precio del producto 2 a 45000"
 "Actualiza el ID 5 con cantidad 8"
 ```
@@ -176,7 +198,7 @@ python ver_historial_logs.py
 ```
 "Elimina el producto con ID 5"
 "Borra el producto número 3"
-"Elimina FIFA 24"
+"Elimina iPhone 14"
 ```
 
 #### Estadísticas
@@ -213,15 +235,14 @@ El proyecto incluye un **sistema de logging completo** que registra:
 
 ### Ver Logs
 
+Los logs se guardan automáticamente en `logs/gamestock_YYYYMMDD.log`
+
 ```bash
-# En tiempo real (mientras usas la app)
-python ver_logs.py
-
-# Historial completo
-python ver_historial_logs.py
-
-# Con comandos Unix
+# Ver logs en tiempo real con tail
 tail -f logs/gamestock_$(date +%Y%m%d).log
+
+# Ver los últimos 50 registros
+tail -50 logs/gamestock_$(date +%Y%m%d).log
 ```
 
 ---
